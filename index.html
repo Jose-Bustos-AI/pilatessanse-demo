@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#0a1f26" />
+  <title>PilateSSanse BodyArt · Pilates que respira contigo</title>
+  <meta name="description" content="Estudio de Pilates con todos los aparatos de J.H. Pilates. Clases de máximo 4 personas e individuales. Avda. Isabel II, 14." />
+  <style>
+    @font-face { font-family: "Fraunces"; src: url("assets/Fraunces.ttf") format("truetype"); font-weight: 100 900; font-style: normal; font-display: swap; }
+    @font-face { font-family: "Fraunces"; src: url("assets/Fraunces-Italic.ttf") format("truetype"); font-weight: 100 900; font-style: italic; font-display: swap; }
+    @font-face { font-family: "Inter"; src: url("assets/Inter.ttf") format("truetype"); font-weight: 100 900; font-display: swap; }
+    :root {
+      --teal: #1b93b3; --teal-d: #12708a; --teal-l: #d6eef4; --teal-xl: #7fd3e8; --coral: #ff8a65; --coral-d: #e8673f;
+      --brown: #0e2a33; --brown-m: #4b6670; --cream: #f7f5f0; --cream-d: #eceae3; --night: #0a1f26;
+      --grad: linear-gradient(90deg, var(--teal), var(--coral));
+      --pad: clamp(20px, 5vw, 64px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { background: var(--cream); }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    body { font-family: "Inter", system-ui, sans-serif; color: var(--brown); background: var(--cream); overflow-x: hidden; }
+    body.loading { overflow: hidden; }
+    img, video, canvas { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; border: 0; background: none; color: inherit; cursor: pointer; }
+    .serif { font-family: "Fraunces", Georgia, serif; font-weight: 600; }
+    h1, h2, h3, #breathState, .ccap, #menu a, #loader .lt, #breathDone div, .card .n { font-variation-settings: "SOFT" 100, "WONK" 0, "opsz" 144; letter-spacing: -0.02em; }
+    #heroTitle .t2, #contacto h2 b, .scard h3 { font-style: italic; }
+    .kicker { font-weight: 800; font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--teal-d); }
+    .kline { display: block; width: 72px; height: 5px; border-radius: 3px; background: var(--grad); margin: 14px 0 0; transform-origin: 0 50%; }
+    section { position: relative; }
+    #grain { position: fixed; inset: -50%; width: 200%; height: 200%; pointer-events: none; z-index: 90; opacity: 0.07;
+             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
+             animation: grain 0.8s steps(4) infinite; }
+    @keyframes grain { 0% { transform: translate(0,0) } 25% { transform: translate(-3%,2%) } 50% { transform: translate(2%,-3%) } 75% { transform: translate(-2%,-1%) } }
+
+    /* ---------- loader ---------- */
+    #loader { position: fixed; inset: 0; z-index: 200; background: var(--cream); display: grid; place-items: center; }
+    #loader .lb { position: relative; width: 150px; height: 150px; }
+    #loader .lc { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #6cc6dc, var(--teal) 55%, var(--teal-d)); transform: scale(0.3); }
+    #loader .lr { position: absolute; inset: 0; border-radius: 50%; border: 3px solid var(--teal); opacity: 0; }
+    #loader .lt { position: absolute; left: 50%; top: calc(100% + 26px); transform: translateX(-50%); font-family: "Fraunces"; font-weight: 700; font-size: 30px; white-space: nowrap; }
+    #loader .lt span { display: inline-block; }
+
+    /* ---------- header ---------- */
+    header { position: fixed; left: 0; right: 0; top: 0; z-index: 100; padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 0; pointer-events: none; }
+    .hbar { pointer-events: auto; margin: 0 auto; max-width: 1180px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            padding: 8px 8px 8px 18px; border-radius: 999px; background: rgba(246,243,238,0.82); backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4);
+            box-shadow: 0 10px 30px rgba(10,31,38,0.12); transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+    header.hide .hbar { transform: translateY(-140%); }
+    .hbar img { height: 34px; width: auto; }
+    .hnav { display: none; gap: 26px; font-weight: 700; font-size: 14px; }
+    .hnav a { position: relative; }
+    .hnav a::after { content: ""; position: absolute; left: 0; bottom: -4px; width: 100%; height: 2px; background: var(--grad); transform: scaleX(0); transform-origin: right; transition: transform .4s; }
+    .hnav a:hover::after { transform: scaleX(1); transform-origin: left; }
+    .hbar .hcta { display: none; } .hcta { padding: 12px 22px; border-radius: 999px; background: var(--brown); color: #fff; font-weight: 800; font-size: 13px; letter-spacing: .08em; }
+    #burger { width: 48px; height: 48px; border-radius: 50%; background: var(--brown); display: grid; place-items: center; position: relative; }
+    #burger i { position: absolute; width: 20px; height: 2px; border-radius: 2px; background: #fff; transition: transform .45s cubic-bezier(.7,0,.2,1); }
+    #burger i:nth-child(1) { transform: translateY(-4px); } #burger i:nth-child(2) { transform: translateY(4px); }
+    body.menu-open #burger i:nth-child(1) { transform: rotate(45deg); } body.menu-open #burger i:nth-child(2) { transform: rotate(-45deg); }
+    #menu { position: fixed; inset: 0; z-index: 99; background: var(--night); color: var(--cream); clip-path: circle(0% at calc(100% - 40px) 40px);
+            display: flex; flex-direction: column; justify-content: center; padding: 0 var(--pad); }
+    #menu a { display: block; overflow: hidden; font-family: "Fraunces"; font-weight: 700; font-size: clamp(44px, 12vw, 96px); line-height: 1.1; }
+    #menu a span { display: inline-block; }
+    #menu a em { font-style: normal; font-family: "Inter"; font-size: 13px; font-weight: 800; letter-spacing: .2em; color: var(--teal-xl); vertical-align: top; margin-right: 12px; }
+    #menu .mfoot { margin-top: 40px; font-size: 14px; opacity: .7; line-height: 1.8; }
+
+    /* ---------- hero ---------- */
+    #hero { height: 100svh; min-height: 560px; overflow: hidden; background: var(--night); color: #fff; }
+    #heroMedia { position: absolute; inset: 0; }
+    #heroMedia video { width: 100%; height: 100%; object-fit: cover; }
+    #heroShade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,31,38,.4) 0%, rgba(10,31,38,.2) 30%, rgba(10,31,38,.62) 52%, rgba(10,31,38,.93) 100%); }
+    #heroIn { position: absolute; left: 0; right: 0; bottom: 0; padding: 0 var(--pad) calc(36px + var(--safe-b)); max-width: 1180px; margin: 0 auto; }
+    #heroIn .kicker { color: var(--teal-xl); }
+    #heroTitle { font-family: "Fraunces"; font-weight: 700; font-size: clamp(56px, 16vw, 150px); line-height: .95; margin: 14px 0 18px; letter-spacing: -0.01em; }
+    #heroTitle .t2 { color: var(--teal-xl); }
+    #heroSub { font-size: 16px; line-height: 1.55; max-width: 460px; opacity: .92; }
+    .btns { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+    .btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 10px; padding: 17px 26px; border-radius: 999px; font-weight: 800; font-size: 14px;
+           letter-spacing: .08em; text-transform: uppercase; isolation: isolate; will-change: transform; }
+    .btn.primary { background: var(--coral); color: #fff; box-shadow: 0 12px 30px rgba(255,138,101,.45); }
+    .btn.ghost { border: 2px solid rgba(255,255,255,.7); color: #fff; }
+    .btn.dark { background: var(--brown); color: #fff; }
+    .btn::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--grad); transform: translateY(101%); transition: transform .5s cubic-bezier(.2,.8,.2,1); border-radius: inherit; }
+    .btn:hover::before { transform: none; }
+    #scrollHint { position: absolute; right: var(--pad); bottom: calc(40px + var(--safe-b)); width: 2px; height: 70px; background: rgba(255,255,255,.25); overflow: hidden; display: none; }
+    #scrollHint::after { content: ""; position: absolute; left: 0; top: -40%; width: 100%; height: 40%; background: #fff; animation: drop 1.6s cubic-bezier(.6,0,.3,1) infinite; }
+    @keyframes drop { to { top: 100%; } }
+
+    /* ---------- marquee ---------- */
+    #marquee { padding: 34px 0; overflow: hidden; background: var(--cream); }
+    .mrow { display: flex; white-space: nowrap; will-change: transform; }
+    .mrow span { font-family: "Fraunces"; font-weight: 700; font-size: clamp(54px, 13vw, 140px); line-height: 1.05; padding-right: .35em; }
+    .mrow .o { color: transparent; -webkit-text-stroke: 1.5px var(--brown); }
+    .mrow .t { color: var(--coral); font-style: italic; }
+    .mrow .dot { color: var(--teal); font-family: "Inter"; font-size: .4em; vertical-align: middle; }
+
+    /* ---------- respira ---------- */
+    #respira { min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 80px var(--pad); overflow: hidden;
+               background: radial-gradient(ellipse at 50% 55%, #ffffff 0%, var(--cream) 60%); }
+    #ballCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    #respira .txt { position: relative; z-index: 2; pointer-events: none; }
+    #respira h2 { font-family: "Fraunces"; font-weight: 700; font-size: clamp(42px, 11vw, 96px); line-height: 1; margin-top: 12px; }
+    #respira p { margin-top: 12px; font-size: 15px; color: var(--brown-m); }
+    #breathPad { position: relative; z-index: 3; margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    #breathBtn { width: 112px; height: 112px; border-radius: 50%; background: rgba(255,255,255,.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 2px solid var(--teal);
+                 display: grid; place-items: center; font-weight: 900; font-size: 12px; letter-spacing: .14em; color: var(--teal-d); touch-action: none; user-select: none; -webkit-user-select: none;
+                 box-shadow: 0 16px 40px rgba(15,111,136,.25); position: relative; }
+    #breathBtn svg { position: absolute; inset: -8px; width: calc(100% + 16px); height: calc(100% + 16px); transform: rotate(-90deg); }
+    #breathBtn circle { fill: none; stroke: var(--teal); stroke-width: 4; stroke-linecap: round; }
+    #breathState { font-family: "Fraunces"; font-weight: 700; font-size: 30px; min-height: 52px; padding: 4px 22px 8px; border-radius: 999px; background: rgba(246,243,238,.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+    #breathState:empty, #breathState.idle { background: none; }
+    #breathCount { display: flex; gap: 8px; }
+    #breathCount i { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--teal); transition: background .4s, transform .4s; }
+    #breathCount i.on { background: var(--teal); transform: scale(1.2); }
+    #breathDone { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; pointer-events: none; opacity: 0; }
+    #breathDone div { background: var(--brown); color: #fff; padding: 22px 30px; border-radius: 28px; font-family: "Fraunces"; font-size: 30px; font-weight: 700; box-shadow: 0 20px 50px rgba(14,42,51,.4); text-align: center; }
+    #breathDone small { display: block; font-family: "Inter"; font-size: 13px; letter-spacing: .1em; margin-top: 8px; color: var(--coral); font-weight: 700; }
+
+    /* ---------- máximo 4 ---------- */
+    #cuatro { height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: 0 var(--pad); overflow: hidden; background: var(--night); color: var(--cream); }
+    #cuatro .big { position: absolute; right: -4vw; top: 50%; transform: translateY(-50%); font-family: "Fraunces"; font-weight: 900; font-size: clamp(320px, 95vw, 820px); line-height: .8;
+                   color: transparent; -webkit-text-stroke: 2px rgba(127,211,232,.35); pointer-events: none; }
+    #cuatro .kicker { color: var(--teal-xl); }
+    #cuatro h2 { font-family: "Fraunces"; font-weight: 700; font-size: clamp(44px, 12vw, 110px); line-height: .98; margin: 16px 0 26px; position: relative; }
+    #cuatro h2 b { color: var(--coral); font-weight: 700; font-style: italic; }
+    .seats { display: flex; gap: 14px; position: relative; }
+    .seat { width: clamp(58px, 17vw, 110px); aspect-ratio: 1; border-radius: 50%; border: 2px dashed rgba(246,243,238,.4); display: grid; place-items: center; position: relative; }
+    .seat .fill { position: absolute; inset: 6px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #6cc6dc, var(--teal) 60%, var(--teal-d)); transform: scale(0); }
+    .seat svg { position: relative; width: 46%; height: 46%; opacity: 0; }
+    #cuatro p { max-width: 460px; margin-top: 28px; font-size: 16px; line-height: 1.6; opacity: .85; position: relative; }
+
+    /* ---------- vídeo que se expande ---------- */
+    #clase { height: 260svh; background: var(--cream); }
+    #claseStick { position: sticky; top: 0; height: 100svh; overflow: hidden; display: grid; place-items: center; }
+    #claseCard { position: absolute; inset: 0; clip-path: inset(22% 8% 22% 8% round 32px); }
+    #claseCard video { width: 100%; height: 100%; object-fit: cover; }
+    #claseCard::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,31,38,0) 50%, rgba(10,31,38,.7)); }
+    .ccap { position: absolute; left: var(--pad); right: var(--pad); bottom: calc(120px + var(--safe-b)); z-index: 2; color: #fff; font-family: "Fraunces"; font-weight: 700;
+            font-size: clamp(40px, 11vw, 100px); line-height: 1; opacity: 0; }
+    .ccap small { display: block; font-family: "Inter"; font-size: 13px; font-weight: 800; letter-spacing: .24em; color: var(--teal-xl); margin-bottom: 10px; }
+    #claseTitle { position: absolute; top: 9%; left: 0; right: 0; text-align: center; z-index: 1; }
+    #claseTitle h2 { font-family: "Fraunces"; font-weight: 700; font-size: clamp(34px, 8.5vw, 72px); line-height: 1; margin-top: 10px; }
+
+    /* ---------- método (horizontal) ---------- */
+    #metodo { overflow: hidden; background: var(--cream-d); }
+    #metodoHead { padding: 90px var(--pad) 10px; }
+    #metodoHead h2 { font-family: "Fraunces"; font-weight: 700; font-size: clamp(42px, 11vw, 96px); line-height: 1; margin-top: 14px; }
+    #track { display: flex; gap: 18px; padding: 30px var(--pad) 90px; width: max-content; will-change: transform; }
+    .card { width: min(78vw, 420px); min-height: 480px; border-radius: 32px; background: var(--cream); padding: 28px; display: flex; flex-direction: column; position: relative; overflow: hidden;
+            box-shadow: 0 20px 50px rgba(14,42,51,.12); transform-style: preserve-3d; }
+    .card .n { font-family: "Fraunces"; font-weight: 900; font-size: 64px; line-height: 1; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .card svg { width: 100%; height: 170px; margin: 18px 0; }
+    .card svg .ln { fill: none; stroke: var(--brown); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+    .card svg .ac { fill: none; stroke: var(--teal); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+    .card h3 { font-family: "Fraunces"; font-weight: 700; font-size: 40px; line-height: 1; }
+    .card p { margin-top: 12px; font-size: 15px; line-height: 1.6; color: var(--brown-m); }
+    .card .tag { margin-top: auto; padding-top: 18px; font-weight: 800; font-size: 11px; letter-spacing: .2em; color: var(--teal-d); }
+    .card.dark { background: var(--brown); color: var(--cream); } .card.dark p { color: rgba(246,243,238,.8); } .card.dark .ln { stroke: var(--cream); }
+    #progress { position: absolute; left: var(--pad); right: var(--pad); bottom: 50px; height: 4px; border-radius: 2px; background: rgba(14,42,51,.12); }
+    #progress i { position: absolute; inset: 0; background: var(--grad); border-radius: 2px; transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* ---------- edades ---------- */
+    #edades { padding: 100px 0 80px; overflow: hidden; }
+    #edades .head { padding: 0 var(--pad); }
+    #edades h2 { font-family: "Fraunces"; font-weight: 700; font-size: clamp(48px, 13vw, 130px); line-height: .95; margin-top: 14px; }
+    #edades h2 .w { display: inline-block; }
+    #edadesImg { margin: 34px var(--pad) 0; height: 72svh; border-radius: 32px; overflow: hidden; position: relative; clip-path: inset(10% 10% 10% 10% round 32px); }
+    #edadesImg img { position: absolute; left: 0; top: -15%; width: 100%; height: 130%; object-fit: cover; object-position: 65% 50%; }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; padding: 26px var(--pad) 0; }
+    .chip { padding: 13px 20px; border-radius: 999px; background: #fff; font-weight: 700; font-size: 14px; box-shadow: 0 8px 22px rgba(14,42,51,.1); display: inline-flex; gap: 10px; align-items: center; }
+    .chip i { width: 22px; height: 22px; border-radius: 50%; background: var(--teal); color: #fff; font-style: normal; font-size: 12px; display: grid; place-items: center; font-weight: 900; }
+    #edades .lead { padding: 26px var(--pad) 0; font-size: 17px; line-height: 1.65; max-width: 640px; color: var(--brown-m); }
+
+    /* ---------- reel ---------- */
+    #reel { padding: 90px var(--pad) 110px; background: var(--night); color: var(--cream); overflow: hidden; text-align: center; perspective: 1200px; }
+    #reel .kicker { color: var(--teal-xl); }
+    #reel h2 { font-family: "Fraunces"; font-weight: 700; font-size: clamp(40px, 10.5vw, 90px); line-height: 1; margin: 14px 0 40px; }
+    #phone { width: min(74vw, 340px); aspect-ratio: 9/19; margin: 0 auto; border-radius: 46px; padding: 11px; background: linear-gradient(145deg, #1d4350, #06141a);
+             box-shadow: 0 50px 90px rgba(0,0,0,.55), inset 0 0 0 2px rgba(255,255,255,.08); position: relative; transform-style: preserve-3d; will-change: transform; }
+    #phone video { width: 100%; height: 100%; object-fit: cover; border-radius: 36px; background: #000; }
+    #phone .notch { position: absolute; top: 20px; left: 50%; width: 90px; height: 24px; margin-left: -45px; border-radius: 20px; background: #000; z-index: 2; }
+    #sound { margin-top: 30px; }
+    #reel .glow { position: absolute; left: 50%; top: 58%; width: 140vw; max-width: 1100px; aspect-ratio: 1; transform: translate(-50%,-50%); border-radius: 50%;
+                  background: radial-gradient(circle, rgba(27,147,179,.35), rgba(27,147,179,0) 60%); pointer-events: none; }
+
+    /* ---------- modalidades (cartas apiladas) ---------- */
+    #clases { padding: 100px var(--pad) 40px; }
+    #clases h2 { font-family: "Fraunces"; font-weight: 700; font-size: clamp(42px, 11vw, 96px); line-height: 1; margin: 14px 0 40px; }
+    .stack { position: relative; }
+    .scard { position: sticky; top: 110px; min-height: 360px; border-radius: 32px; padding: 32px 28px; margin-bottom: 24px; color: #fff; overflow: hidden; transform-origin: 50% 0; box-shadow: 0 -10px 40px rgba(10,31,38,.15); }
+    .scard:nth-child(1) { background: linear-gradient(150deg, #1b93b3, #0f6f88); }
+    .scard:nth-child(2) { background: linear-gradient(150deg, #ff8a65, #e8673f); top: 130px; }
+    .scard:nth-child(3) { background: linear-gradient(150deg, #2a1a10, #0a1f26); top: 150px; }
+    .scard .sn { font-weight: 800; font-size: 12px; letter-spacing: .26em; opacity: .8; }
+    .scard h3 { font-family: "Fraunces"; font-weight: 700; font-size: clamp(40px, 10vw, 76px); line-height: 1; margin: 14px 0; }
+    .scard p { font-size: 16px; line-height: 1.6; max-width: 480px; opacity: .92; }
+    .scard .ring { position: absolute; right: -80px; bottom: -80px; width: 260px; height: 260px; border-radius: 50%; border: 2px solid rgba(255,255,255,.25); }
+    .scard .ring.b { right: -40px; bottom: -40px; width: 180px; height: 180px; }
+
+    /* ---------- contacto ---------- */
+    #contacto { padding: 110px var(--pad) calc(150px + var(--safe-b)); background: var(--cream); overflow: hidden; text-align: center; }
+    #contacto .rings { position: absolute; left: 50%; top: 42%; width: 0; height: 0; }
+    #contacto .rings i { position: absolute; left: -200px; top: -200px; width: 400px; height: 400px; border-radius: 50%; border: 2px solid var(--teal); opacity: 0; animation: ripple 4.8s cubic-bezier(.2,.6,.3,1) infinite; }
+    #contacto .rings i:nth-child(2) { animation-delay: 1.2s; } #contacto .rings i:nth-child(3) { animation-delay: 2.4s; } #contacto .rings i:nth-child(4) { animation-delay: 3.6s; }
+    @keyframes ripple { 0% { transform: scale(.2); opacity: .6 } 100% { transform: scale(2.4); opacity: 0 } }
+    #contacto img.lg { width: min(70vw, 380px); margin: 0 auto; position: relative; }
+    #contacto h2 { font-family: "Fraunces"; font-weight: 700; font-size: clamp(44px, 12vw, 110px); line-height: 1; margin: 34px 0 10px; position: relative; }
+    #contacto h2 b { font-weight: 700; background: linear-gradient(90deg, var(--teal), var(--coral), var(--teal)); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 5s linear infinite; }
+    @keyframes shine { to { background-position: -200% 0; } }
+    #contacto .btns { justify-content: center; position: relative; }
+    .info { margin-top: 36px; display: grid; gap: 12px; position: relative; }
+    .info a, .info div { display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; font-size: 17px; }
+    .info svg { width: 20px; height: 20px; fill: var(--teal); flex: none; }
+    footer { padding: 26px var(--pad) calc(110px + var(--safe-b)); text-align: center; font-size: 12px; color: var(--brown-m); background: var(--cream-d); }
+
+    /* ---------- barra fija móvil ---------- */
+    #dock { position: fixed; left: 12px; right: 12px; bottom: calc(12px + var(--safe-b)); z-index: 95; display: flex; gap: 8px; padding: 8px; border-radius: 999px;
+            background: rgba(10,31,38,.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 16px 40px rgba(0,0,0,.35); transform: translateY(160%); }
+    #dock a { flex: 1; text-align: center; padding: 15px 10px; border-radius: 999px; font-weight: 800; font-size: 13px; letter-spacing: .1em; color: #fff; }
+    #dock a.r { background: var(--coral); }
+    #dock a.c { flex: 0 0 52px; background: rgba(255,255,255,.12); display: grid; place-items: center; padding: 0; }
+    #dock a.c svg { width: 20px; height: 20px; fill: #fff; }
+
+    /* ripple al tocar */
+    .tap { position: fixed; z-index: 150; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; border: 2px solid var(--teal); pointer-events: none; }
+    /* cursor (solo escritorio) */
+    #cursor { position: fixed; left: 0; top: 0; z-index: 160; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--teal); pointer-events: none; mix-blend-mode: multiply; display: none; }
+
+    @media (min-width: 900px) {
+      .hnav { display: flex; } .hbar .hcta { display: inline-flex; } #burger { display: none; }
+      #scrollHint { display: block; }
+      #dock { display: none; }
+      #cursor { display: block; }
+      .scard { min-height: 340px; padding: 48px; }
+      #claseCard { clip-path: inset(24% 24% 24% 24% round 32px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #grain { animation: none; } #contacto .rings i { animation: none; }
+    }
+  </style>
+</head>
+<body class="loading">
+  <div id="grain"></div>
+  <div id="cursor"></div>
+
+  <!-- loader: una respiración -->
+  <div id="loader">
+    <div class="lb">
+      <div class="lr" id="lr1"></div><div class="lr" id="lr2"></div>
+      <div class="lc"></div>
+      <div class="lt"><span id="ltIn">Inhala…</span></div>
+    </div>
+  </div>
+
+  <header id="hdr">
+    <div class="hbar">
+      <a href="#hero" aria-label="Inicio"><img src="assets/logo.png" alt="PilateSSanse BodyArt" /></a>
+      <nav class="hnav">
+        <a href="#respira">Respira</a><a href="#metodo">El método</a><a href="#reel">Una clase</a><a href="#clases">Clases</a><a href="#contacto">Contacto</a>
+      </nav>
+      <a class="hcta btn" href="#contacto">Reserva tu clase</a>
+      <button id="burger" aria-label="Menú"><i></i><i></i></button>
+    </div>
+  </header>
+
+  <div id="menu" aria-hidden="true">
+    <a href="#respira"><span><em>01</em>Respira</span></a>
+    <a href="#metodo"><span><em>02</em>El método</span></a>
+    <a href="#reel"><span><em>03</em>Una clase</span></a>
+    <a href="#clases"><span><em>04</em>Clases</span></a>
+    <a href="#contacto"><span><em>05</em>Contacto</span></a>
+    <div class="mfoot">Avda. Isabel II, 14 - bajo<br />611 157 225 · info@pilatessanse.com</div>
+  </div>
+
+  <main>
+    <!-- HERO -->
+    <section id="hero">
+      <div id="heroMedia"><video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="assets/hero-poster.jpg"></video></div>
+      <div id="heroShade"></div>
+      <div id="heroIn">
+        <div class="kicker hfade">Estudio de Pilates · desde 2013</div>
+        <h1 id="heroTitle"><span class="t1">Pilates que</span><br /><span class="t2">respira</span> <span class="t1">contigo.</span></h1>
+        <p id="heroSub" class="hfade">Máximo 4 personas por clase y todos los aparatos de J.H. Pilates. Cada sesión, pensada para tu cuerpo.</p>
+        <div class="btns hfade">
+          <a class="btn primary magnetic" href="#contacto">Reserva tu clase</a>
+          <a class="btn ghost magnetic" href="#respira">Respira con nosotros</a>
+        </div>
+      </div>
+      <div id="scrollHint"></div>
+    </section>
+
+    <!-- MARQUEE -->
+    <section id="marquee" aria-hidden="true">
+      <div class="mrow" id="m1"></div>
+      <div class="mrow" id="m2"></div>
+    </section>
+
+    <!-- RESPIRA (interactivo) -->
+    <section id="respira">
+      <canvas id="ballCanvas"></canvas>
+      <div class="txt">
+        <div class="kicker">Pruébalo ahora</div>
+        <h2>Respira<br />con nosotros</h2>
+        <p>Mantén pulsado para inhalar. Suelta para exhalar.</p>
+      </div>
+      <div id="breathPad">
+        <div id="breathState" class="idle">&nbsp;</div>
+        <button id="breathBtn" aria-label="Mantén pulsado para inhalar">
+          <svg viewBox="0 0 128 128"><circle id="breathArc" cx="64" cy="64" r="60" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" /></svg>
+          MANTÉN
+        </button>
+        <div id="breathCount"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div id="breathDone"><div>Así empieza<br />cada clase.<small>×5 RESPIRACIONES FLUIDAS</small></div></div>
+    </section>
+
+    <!-- MÁXIMO 4 -->
+    <section id="cuatro">
+      <div class="big">4</div>
+      <div class="kicker">Grupos reducidos</div>
+      <h2>Nunca más<br />de <b>cuatro</b>.</h2>
+      <div class="seats">
+        <div class="seat"><div class="fill"></div><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4" fill="#fff"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z" fill="#fff"/></svg></div>
+        <div class="seat"><div class="fill"></div><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4" fill="#fff"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z" fill="#fff"/></svg></div>
+        <div class="seat"><div class="fill"></div><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4" fill="#fff"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z" fill="#fff"/></svg></div>
+        <div class="seat"><div class="fill"></div><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4" fill="#fff"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z" fill="#fff"/></svg></div>
+      </div>
+      <p>Clases grupales de máximo 4 personas o individuales. Así el instructor ve cada movimiento y adapta la clase a lo que tu cuerpo necesita.</p>
+    </section>
+
+    <!-- CLASE: vídeo que se expande -->
+    <section id="clase">
+      <div id="claseStick">
+        <div id="claseTitle"><div class="kicker">Pilates en aparatos</div><h2>Así se mueve<br />tu cuerpo</h2></div>
+        <div id="claseCard">
+          <video id="claseVideo" muted loop playsinline preload="metadata" poster="assets/clase-poster.jpg"></video>
+        </div>
+        <div class="ccap" id="cc1"><small>01 · Respiración</small>Inhala, abro.</div>
+        <div class="ccap" id="cc2"><small>02 · Control</small>Exhala, cierro.</div>
+        <div class="ccap" id="cc3"><small>03 · Centro</small>Ombliguito dentro.</div>
+      </div>
+    </section>
+
+    <!-- MÉTODO -->
+    <section id="metodo">
+      <div id="metodoHead"><div class="kicker">El método</div><h2>Suelo<br />y aparatos</h2></div>
+      <div id="track">
+        <article class="card">
+          <div class="n">01</div>
+          <svg viewBox="0 0 300 170"><path class="ln" d="M20 140 L280 140" /><circle class="ac" cx="70" cy="112" r="16" /><path class="ln" d="M86 118 C 130 112, 170 112, 200 122 L 250 70" /><path class="ac" d="M120 118 L 150 70" /></svg>
+          <h3>Suelo</h3>
+          <p>El centro del método: lo primero que creó Joseph Pilates. Una serie de ejercicios en colchoneta con un orden pensado, trabajando contra la gravedad.</p>
+          <div class="tag">MAT · COLCHONETA</div>
+        </article>
+        <article class="card dark">
+          <div class="n">02</div>
+          <svg viewBox="0 0 300 170"><rect class="ln" x="20" y="110" width="260" height="22" rx="11" /><path class="ac" d="M70 104 L180 104" /><path class="ln" d="M260 110 L260 50 M40 132 L40 150 M250 132 L250 150" /><path class="ac" d="M200 110 C 210 90, 230 80, 255 60" /></svg>
+          <h3>Reformer</h3>
+          <p>Un carro que se desliza sobre muelles de distintas intensidades: te ayuda a moverte o te reta, según lo que necesites.</p>
+          <div class="tag">MUELLES · RESISTENCIA</div>
+        </article>
+        <article class="card">
+          <div class="n">03</div>
+          <svg viewBox="0 0 300 170"><path class="ln" d="M40 150 L40 30 L260 30 L260 150 M40 120 L260 120" /><path class="ac" d="M110 30 L110 70 M190 30 L190 70" /><circle class="ac" cx="150" cy="96" r="12" /></svg>
+          <h3>Cadillac</h3>
+          <p>Una estructura con barras y muelles que permite desde recuperar movilidad hasta perfeccionar la técnica más exigente.</p>
+          <div class="tag">VERSATILIDAD</div>
+        </article>
+        <article class="card dark">
+          <div class="n">04</div>
+          <svg viewBox="0 0 300 170"><rect class="ln" x="90" y="40" width="120" height="90" rx="10" /><path class="ln" d="M100 130 L100 155 M200 130 L200 155" /><path class="ac" d="M110 140 L190 140" /><path class="ac" d="M150 40 C 150 20, 170 12, 190 16" /></svg>
+          <h3>Silla</h3>
+          <p>Pequeña y muy exigente: equilibrio, fuerza y control del centro en cada repetición.</p>
+          <div class="tag">EQUILIBRIO · FUERZA</div>
+        </article>
+      </div>
+      <div id="progress"><i></i></div>
+    </section>
+
+    <!-- EDADES -->
+    <section id="edades">
+      <div class="head"><div class="kicker">Pilates para</div><h2 id="edadesT">todas las edades.</h2></div>
+      <div id="edadesImg"><img src="assets/foto.jpg" alt="Alumnos de distintas edades en los reformers del estudio" loading="lazy" /></div>
+      <div class="chips">
+        <span class="chip"><i>✓</i>Hagas deporte o no</span>
+        <span class="chip"><i>✓</i>En rehabilitación</span>
+        <span class="chip"><i>✓</i>Cuerpo y mente</span>
+        <span class="chip"><i>✓</i>Cada clase, diferente</span>
+      </div>
+      <p class="lead">El Pilates lo puede practicar cualquier persona que quiera mejorar su calidad de vida. Planificamos cada clase para que sea siempre distinta, poniendo el foco en lo que necesitas tú.</p>
+    </section>
+
+    <!-- REEL -->
+    <section id="reel">
+      <div class="glow"></div>
+      <div class="kicker">En 25 segundos</div>
+      <h2>Vive una clase<br />desde dentro</h2>
+      <div id="phone"><div class="notch"></div><video id="reelVideo" src="assets/reel.mp4" poster="assets/reel-poster.jpg" muted loop playsinline preload="metadata"></video></div>
+      <button class="btn ghost" id="sound">🔊 Activar sonido</button>
+    </section>
+
+    <!-- CLASES -->
+    <section id="clases">
+      <div class="kicker">Modalidades</div>
+      <h2>Elige cómo<br />quieres moverte</h2>
+      <div class="stack">
+        <article class="scard"><div class="ring"></div><div class="ring b"></div><div class="sn">01 · GRUPALES</div><h3>Máximo 4 personas</h3><p>La energía del grupo con la atención de una clase personal. Suelo y aparatos combinados en cada sesión.</p></article>
+        <article class="scard"><div class="ring"></div><div class="ring b"></div><div class="sn">02 · INDIVIDUALES</div><h3>Solo para ti</h3><p>Una sesión totalmente a medida: tu ritmo, tus objetivos y tu momento.</p></article>
+        <article class="scard"><div class="ring"></div><div class="ring b"></div><div class="sn">03 · ESPACIO</div><h3>Alquiler de sala</h3><p>Un estudio luminoso y totalmente equipado, disponible para profesionales.</p></article>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contacto">
+      <div class="rings"><i></i><i></i><i></i><i></i></div>
+      <img class="lg" src="assets/logo.png" alt="PilateSSanse BodyArt" />
+      <h2>Equilibrio entre<br /><b>cuerpo y mente.</b></h2>
+      <div class="btns">
+        <a class="btn primary magnetic" href="tel:+34611157225">Llamar · 611 157 225</a>
+        <a class="btn dark magnetic" href="mailto:info@pilatessanse.com?subject=Quiero%20reservar%20una%20clase">Escríbenos</a>
+      </div>
+      <div class="info">
+        <div><svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>Avda. Isabel II, 14 - bajo</div>
+        <a href="mailto:info@pilatessanse.com"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5z"/></svg>info@pilatessanse.com</a>
+      </div>
+    </section>
+  </main>
+  <footer>© 2013–2026 PilateSSanse BodyArt · Demo de diseño · Vídeos de stock: Pexels</footer>
+
+  <nav id="dock">
+    <a class="c" href="tel:+34611157225" aria-label="Llamar"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg></a>
+    <a class="r" href="#contacto">RESERVA TU CLASE</a>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script>
+  (() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const MOBILE = matchMedia("(max-width: 899px)").matches;
+    const TOUCH = matchMedia("(hover: none)").matches;
+    const buzz = (p) => { try { if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate(p); } catch (e) {} };
+
+    // ---------- vídeos según pantalla ----------
+    const hv = document.getElementById("heroVideo");
+    hv.src = MOBILE ? "assets/hero-movil.mp4" : "assets/hero-escritorio.mp4";
+    if (!MOBILE) hv.poster = "assets/hero-escritorio-poster.jpg";
+    const cv = document.getElementById("claseVideo");
+    cv.src = MOBILE ? "assets/clase-vertical.mp4" : "assets/clase.mp4";
+
+    // ---------- scroll suave ----------
+    let lenis = null;
+    if (!RM && window.Lenis) {
+      lenis = new Lenis({ duration: 1.15, smoothWheel: true });
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add((t) => lenis.raf(t * 1000));
+      gsap.ticker.lagSmoothing(0);
+    }
+    const goTo = (id) => { const el = document.querySelector(id); if (!el) return; lenis ? lenis.scrollTo(el, { offset: 0, duration: 1.4 }) : el.scrollIntoView({ behavior: "smooth" }); };
+    document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); closeMenu(); goTo(a.getAttribute("href")); }));
+
+    // ---------- texto partido en letras/palabras ----------
+    const splitChars = (el) => {
+      el.querySelectorAll(".t1, .t2").forEach((s) => {
+        const t = s.textContent; s.textContent = "";
+        t.split(" ").forEach((w, wi, arr) => {
+          const ws = document.createElement("span"); ws.style.display = "inline-block"; ws.style.whiteSpace = "nowrap";
+          [...w].forEach((c) => { const sp = document.createElement("span"); sp.textContent = c; sp.style.display = "inline-block"; sp.className = "ch"; ws.appendChild(sp); });
+          s.appendChild(ws); if (wi < arr.length - 1) s.appendChild(document.createTextNode(" "));
+        });
+      });
+      return el.querySelectorAll(".ch");
+    };
+    const heroChars = splitChars(document.getElementById("heroTitle"));
+    const edT = document.getElementById("edadesT");
+    edT.innerHTML = edT.textContent.split(" ").map((w) => `<span class="w">${w}</span>`).join(" ");
+
+    // ---------- loader: una respiración ----------
+    const intro = gsap.timeline({ paused: true });
+    gsap.set(heroChars, { yPercent: 110, rotate: 8, opacity: 0 });
+    gsap.set(".hfade", { y: 30, opacity: 0 });
+    const start = () => {
+      const lt = gsap.timeline({ onComplete: () => { document.body.classList.remove("loading"); document.getElementById("loader").remove(); intro.play(); } });
+      if (RM) { lt.to("#loader", { opacity: 0, duration: 0.3 }); return; }
+      lt.to("#loader .lc", { scale: 1, duration: 1.1, ease: "sine.inOut" })
+        .fromTo(["#lr1", "#lr2"], { scale: 0.6, opacity: 0.8 }, { scale: 2.2, opacity: 0, duration: 1.1, stagger: 0.18, ease: "sine.out" }, 0.2)
+        .to("#ltIn", { yPercent: -60, opacity: 0, duration: 0.25 }, 0.95)
+        .add(() => (document.getElementById("ltIn").textContent = "Exhala…"))
+        .fromTo("#ltIn", { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.25 })
+        .to("#loader .lc", { scale: 18, duration: 0.9, ease: "power3.in" }, "+=0.15")
+        .to("#loader", { clipPath: "circle(0% at 50% 50%)", duration: 0.7, ease: "power3.inOut" }, "-=0.25");
+      gsap.set("#loader", { clipPath: "circle(150% at 50% 50%)" });
+    };
+    intro.to(heroChars, { yPercent: 0, rotate: 0, opacity: 1, duration: 0.9, ease: "expo.out", stagger: 0.025 })
+         .to(".hfade", { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", stagger: 0.1 }, 0.3)
+         .fromTo("#heroMedia", { scale: 1.25 }, { scale: 1, duration: 2.2, ease: "expo.out" }, 0);
+    let started = false;
+    const go = () => { if (!started) { started = true; start(); } };
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(go);
+    setTimeout(go, 2500);
+
+    // ---------- header que se esconde + dock ----------
+    const hdr = document.getElementById("hdr");
+    ScrollTrigger.create({ start: 0, end: "max", onUpdate: (s) => { hdr.classList.toggle("hide", s.direction === 1 && s.scroll() > 200); } });
+    gsap.to("#dock", { y: 0, ease: "power3.out", duration: 0.6, scrollTrigger: { trigger: "#marquee", start: "top bottom", toggleActions: "play none none reverse" } });
+
+    // ---------- menú ----------
+    const mtl = gsap.timeline({ paused: true })
+      .to("#menu", { clipPath: "circle(150% at calc(100% - 40px) 40px)", duration: 0.8, ease: "power3.inOut" })
+      .fromTo("#menu a span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.06 }, 0.3)
+      .fromTo("#menu .mfoot", { opacity: 0 }, { opacity: 0.7, duration: 0.4 }, 0.6);
+    function closeMenu() { if (document.body.classList.contains("menu-open")) { document.body.classList.remove("menu-open"); mtl.reverse(); lenis && lenis.start(); } }
+    document.getElementById("burger").addEventListener("click", () => {
+      buzz(10);
+      if (document.body.classList.toggle("menu-open")) { mtl.play(); lenis && lenis.stop(); } else { mtl.reverse(); lenis && lenis.start(); }
+    });
+
+    // ---------- hero: parallax al bajar ----------
+    gsap.to("#heroMedia", { yPercent: 25, ease: "none", scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true } });
+    gsap.to("#heroIn", { yPercent: -30, opacity: 0, ease: "none", scrollTrigger: { trigger: "#hero", start: "30% top", end: "bottom top", scrub: true } });
+
+    // ---------- marquee con velocidad de scroll ----------
+    const words = ["Inhala", "Abro", "Exhala", "Cierro", "Fluye", "Controla", "Alarga"];
+    const fill = (el, off) => { let h = ""; for (let r = 0; r < 4; r++) words.forEach((w, i) => { const c = (i + off) % 3 === 0 ? "o" : (i + off) % 3 === 1 ? "t" : ""; h += `<span class="${c}">${w}</span><span class="dot">●</span>`; }); el.innerHTML = h; };
+    fill(document.getElementById("m1"), 0); fill(document.getElementById("m2"), 1);
+    let mx = 0, vel = 0;
+    ScrollTrigger.create({ trigger: "#marquee", start: "top bottom", end: "bottom top", onUpdate: (s) => { vel = gsap.utils.clamp(-30, 30, s.getVelocity() / 120); } });
+    const m1 = document.getElementById("m1"), m2 = document.getElementById("m2");
+    gsap.ticker.add(() => {
+      if (RM) return;
+      mx -= 0.6 + Math.abs(vel); vel *= 0.92;
+      const w = m1.scrollWidth / 4;
+      const x = ((mx % w) + w) % w;
+      m1.style.transform = `translateX(${-x}px) skewX(${-vel * 0.6}deg)`;
+      m2.style.transform = `translateX(${x - w}px) skewX(${vel * 0.6}deg)`;
+    });
+
+    // ---------- máximo 4: escena fijada ----------
+    const c4 = gsap.timeline({ scrollTrigger: { trigger: "#cuatro", start: "top top", end: "+=140%", scrub: 0.6, pin: true } });
+    c4.fromTo("#cuatro .big", { scale: 0.6, rotate: -12, opacity: 0 }, { scale: 1, rotate: 0, opacity: 1, duration: 1 })
+      .fromTo("#cuatro h2", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 0.2);
+    document.querySelectorAll(".seat").forEach((s, i) => {
+      c4.to(s.querySelector(".fill"), { scale: 1, duration: 0.4, ease: "back.out(2)" }, 0.7 + i * 0.35)
+        .to(s.querySelector("svg"), { opacity: 1, duration: 0.2 }, 0.85 + i * 0.35)
+        .to(s, { borderColor: "rgba(127,211,232,0)", duration: 0.2 }, 0.7 + i * 0.35);
+    });
+    c4.fromTo("#cuatro p", { y: 30, opacity: 0 }, { y: 0, opacity: 0.85, duration: 0.5 }, 2.1);
+    ScrollTrigger.create({ trigger: "#cuatro", start: "top top", end: "+=140%", onUpdate: (s) => {
+      const n = Math.min(4, Math.floor((s.progress - 0.25) / 0.14) + 1);
+      if (n !== window.__seat && n > 0) { window.__seat = n; buzz(8); }
+    } });
+
+    // ---------- vídeo que se expande ----------
+    const isDesk = !MOBILE;
+    const ctl = gsap.timeline({ scrollTrigger: { trigger: "#clase", start: "top top", end: "bottom bottom", scrub: 0.5,
+      onEnter: () => cv.play().catch(() => {}), onEnterBack: () => cv.play().catch(() => {}), onLeave: () => cv.pause(), onLeaveBack: () => cv.pause() } });
+    ctl.to("#claseCard", { clipPath: "inset(0% 0% 0% 0% round 0px)", duration: 1, ease: "power2.inOut" })
+       .to("#claseTitle", { opacity: 0, y: -40, duration: 0.4 }, 0.1)
+       .fromTo("#claseCard video", { scale: 1.25 }, { scale: 1, duration: 1 }, 0);
+    ["#cc1", "#cc2", "#cc3"].forEach((c, i) => {
+      ctl.fromTo(c, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.3 }, 1 + i * 0.7);
+      if (i < 2) ctl.to(c, { opacity: 0, y: -30, duration: 0.25 }, 1.5 + i * 0.7);
+    });
+
+    // ---------- método: scroll horizontal ----------
+    const track = document.getElementById("track");
+    const dist = () => track.scrollWidth - window.innerWidth;
+    const htl = gsap.to(track, { x: () => -dist(), ease: "none", scrollTrigger: { trigger: "#metodo", start: "top top", end: () => "+=" + dist(), scrub: 0.6, pin: true, invalidateOnRefresh: true } });
+    gsap.to("#progress i", { scaleX: 1, ease: "none", scrollTrigger: { trigger: "#metodo", start: "top top", end: () => "+=" + dist(), scrub: true } });
+    document.querySelectorAll(".card").forEach((card) => {
+      card.querySelectorAll(".ln, .ac").forEach((p) => {
+        const L = p.getTotalLength ? p.getTotalLength() : 600;
+        gsap.fromTo(p, { strokeDasharray: L, strokeDashoffset: L }, { strokeDashoffset: 0, ease: "power1.inOut",
+          scrollTrigger: { trigger: card, containerAnimation: htl, start: "left 95%", end: "left 40%", scrub: true } });
+      });
+      gsap.fromTo(card, { rotateY: -18, scale: 0.92 }, { rotateY: 0, scale: 1, ease: "none", scrollTrigger: { trigger: card, containerAnimation: htl, start: "left right", end: "left 55%", scrub: true } });
+    });
+
+    // ---------- edades ----------
+    gsap.fromTo("#edadesT .w", { yPercent: 100, opacity: 0, rotate: 6 }, { yPercent: 0, opacity: 1, rotate: 0, stagger: 0.08, duration: 0.9, ease: "expo.out", scrollTrigger: { trigger: "#edades", start: "top 75%" } });
+    gsap.to("#edadesImg", { clipPath: "inset(0% 0% 0% 0% round 32px)", ease: "none", scrollTrigger: { trigger: "#edadesImg", start: "top 90%", end: "top 30%", scrub: true } });
+    gsap.fromTo("#edadesImg img", { yPercent: -10, scale: 1.15 }, { yPercent: 10, scale: 1, ease: "none", scrollTrigger: { trigger: "#edadesImg", start: "top bottom", end: "bottom top", scrub: true } });
+    gsap.fromTo("#edades .chip", { y: 30, opacity: 0, scale: 0.8 }, { y: 0, opacity: 1, scale: 1, stagger: 0.08, ease: "back.out(2)", duration: 0.6, scrollTrigger: { trigger: "#edades .chips", start: "top 88%" } });
+
+    // ---------- reel: móvil 3D ----------
+    const rv = document.getElementById("reelVideo");
+    ScrollTrigger.create({ trigger: "#phone", start: "top 85%", end: "bottom 15%", onToggle: (s) => (s.isActive ? rv.play().catch(() => {}) : rv.pause()) });
+    gsap.fromTo("#phone", { rotateX: 30, y: 120, scale: 0.85 }, { rotateX: 0, y: 0, scale: 1, ease: "none", scrollTrigger: { trigger: "#reel", start: "top 80%", end: "center center", scrub: true } });
+    const snd = document.getElementById("sound");
+    snd.addEventListener("click", () => { rv.muted = !rv.muted; if (!rv.muted) { rv.currentTime = 0; rv.play(); } snd.textContent = rv.muted ? "🔊 Activar sonido" : "🔇 Silenciar"; buzz(12); });
+    const tiltPhone = (x, y) => gsap.to("#phone", { rotateY: x * 14, rotateX: -y * 10, duration: 0.8, ease: "power3.out", overwrite: "auto" });
+
+    // ---------- cartas apiladas ----------
+    gsap.utils.toArray(".scard").forEach((c, i, all) => {
+      if (i === all.length - 1) return;
+      gsap.to(c, { scale: 0.92, opacity: 0.6, ease: "none", scrollTrigger: { trigger: all[i + 1], start: "top bottom", end: "top 150px", scrub: true } });
+    });
+    gsap.utils.toArray(".scard h3").forEach((h) => gsap.fromTo(h, { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, ease: "expo.out", scrollTrigger: { trigger: h, start: "top 85%" } }));
+
+    // ---------- contacto ----------
+    gsap.fromTo("#contacto h2", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "expo.out", scrollTrigger: { trigger: "#contacto", start: "top 70%" } });
+    gsap.fromTo("#contacto img.lg", { scale: 0.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 1, ease: "back.out(1.6)", scrollTrigger: { trigger: "#contacto", start: "top 75%" } });
+
+    // ---------- ondas al tocar (móvil) ----------
+    window.addEventListener("pointerdown", (e) => {
+      if (RM || e.target.closest("#breathBtn")) return;
+      const d = document.createElement("div"); d.className = "tap"; d.style.left = e.clientX + "px"; d.style.top = e.clientY + "px"; document.body.appendChild(d);
+      gsap.fromTo(d, { scale: 0.5, opacity: 0.9 }, { scale: 6, opacity: 0, duration: 0.7, ease: "power2.out", onComplete: () => d.remove() });
+    }, { passive: true });
+
+    // ---------- botones magnéticos + cursor (escritorio) ----------
+    if (!TOUCH) {
+      const cur = document.getElementById("cursor");
+      const qx = gsap.quickTo(cur, "x", { duration: 0.35, ease: "power3" }), qy = gsap.quickTo(cur, "y", { duration: 0.35, ease: "power3" });
+      window.addEventListener("mousemove", (e) => {
+        qx(e.clientX); qy(e.clientY);
+        tiltPhone(e.clientX / innerWidth - 0.5, e.clientY / innerHeight - 0.5);
+        window.__tilt = [e.clientX / innerWidth - 0.5, e.clientY / innerHeight - 0.5];
+      });
+      document.querySelectorAll("a, button").forEach((el) => {
+        el.addEventListener("mouseenter", () => gsap.to(cur, { scale: 3.2, opacity: 0.35, duration: 0.3 }));
+        el.addEventListener("mouseleave", () => gsap.to(cur, { scale: 1, opacity: 1, duration: 0.3 }));
+      });
+      document.querySelectorAll(".magnetic").forEach((b) => {
+        b.addEventListener("mousemove", (e) => { const r = b.getBoundingClientRect(); gsap.to(b, { x: (e.clientX - r.left - r.width / 2) * 0.3, y: (e.clientY - r.top - r.height / 2) * 0.4, duration: 0.4 }); });
+        b.addEventListener("mouseleave", () => gsap.to(b, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.4)" }));
+      });
+    }
+
+    // ---------- giroscopio (móvil) ----------
+    window.__tilt = [0, 0];
+    const onOrient = (e) => {
+      const x = gsap.utils.clamp(-1, 1, (e.gamma || 0) / 30) * 0.5, y = gsap.utils.clamp(-1, 1, ((e.beta || 0) - 45) / 30) * 0.5;
+      window.__tilt = [x, y]; tiltPhone(x, y);
+      gsap.to("#heroMedia video", { x: -x * 30, y: -y * 20, duration: 1, ease: "power3.out", overwrite: "auto" });
+    };
+    let gyroOn = false;
+    const enableGyro = () => {
+      if (gyroOn || !window.DeviceOrientationEvent) return;
+      if (typeof DeviceOrientationEvent.requestPermission === "function") {
+        DeviceOrientationEvent.requestPermission().then((p) => { if (p === "granted") { window.addEventListener("deviceorientation", onOrient); gyroOn = true; } }).catch(() => {});
+      } else { window.addEventListener("deviceorientation", onOrient); gyroOn = true; }
+    };
+    if (TOUCH) window.addEventListener("touchend", enableGyro, { once: true });
+
+    window.__site = { RM, MOBILE, buzz };
+    window.addEventListener("load", () => ScrollTrigger.refresh());
+  })();
+  </script>
+
+  <!-- bola 3D que respira (Three.js) -->
+  <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
+  <script type="module">
+    import * as THREE from "three";
+    const { RM, buzz } = window.__site || { RM: false, buzz: () => {} };
+    const canvas = document.getElementById("ballCanvas");
+    const sec = document.getElementById("respira");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+    camera.position.set(0, 0, 9);
+
+    const noise = `
+      vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;} vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
+      vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);} vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
+      float snoise(vec3 v){const vec2 C=vec2(1.0/6.0,1.0/3.0);const vec4 D=vec4(0.0,0.5,1.0,2.0);vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);
+      vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.0-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;
+      i=mod289(i);vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));
+      float n_=0.142857142857;vec3 ns=n_*D.wyz-D.xzx;vec4 j=p-49.0*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.0*x_);
+      vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.0-abs(x)-abs(y);vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);
+      vec4 s0=floor(b0)*2.0+1.0;vec4 s1=floor(b1)*2.0+1.0;vec4 sh=-step(h,vec4(0.0));vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+      vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);
+      vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
+      vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);m=m*m;
+      return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}`;
+    const uni = { uTime: { value: 0 }, uAmp: { value: 0.1 }, uBreath: { value: 0 } };
+    const mat = new THREE.ShaderMaterial({
+      uniforms: uni,
+      vertexShader: noise + `
+        uniform float uTime, uAmp, uBreath; varying vec3 vN; varying vec3 vV; varying float vD;
+        void main(){ float d = snoise(normal*0.9 + uTime*0.3)*uAmp + snoise(normal*1.8 - uTime*0.4)*uAmp*0.25;
+          vec3 p = position + normal*d; vD = d;
+          vec4 mv = modelViewMatrix*vec4(p,1.0); vV = -mv.xyz; vN = normalize(normalMatrix*normal);
+          gl_Position = projectionMatrix*mv; }`,
+      fragmentShader: `
+        uniform float uBreath; varying vec3 vN; varying vec3 vV; varying float vD;
+        void main(){ vec3 n = normalize(vN); vec3 v = normalize(vV);
+          float fr = pow(1.0 - max(dot(n,v),0.0), 2.2);
+          vec3 deep = vec3(0.06,0.43,0.53), mid = vec3(0.106,0.576,0.702), hi = vec3(0.50,0.83,0.91), warm = vec3(0.48,0.27,0.16);
+          float l = clamp(dot(n, normalize(vec3(-0.4,0.7,0.6)))*0.5+0.5, 0.0, 1.0);
+          vec3 c = mix(deep, mid, l); c = mix(c, hi, smoothstep(0.75,1.0,l)*0.7);
+          c = mix(c, warm, smoothstep(0.05,0.25,-vD)*0.35);
+          c += fr*mix(vec3(0.85,0.95,1.0), vec3(1.0), uBreath)*0.65;
+          float spec = pow(max(dot(reflect(-normalize(vec3(-0.4,0.7,0.6)), n), v), 0.0), 40.0);
+          c += spec*0.6;
+          gl_FragColor = vec4(c, 1.0); }`,
+    });
+    const ball = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 64), mat);
+    scene.add(ball);
+    // anillos que se expanden al exhalar
+    const rings = [];
+    for (let i = 0; i < 3; i++) {
+      const r = new THREE.Mesh(new THREE.TorusGeometry(1.3, 0.012, 8, 128), new THREE.MeshBasicMaterial({ color: 0x1b93b3, transparent: true, opacity: 0 }));
+      scene.add(r); rings.push(r);
+    }
+    const resize = () => { const w = sec.clientWidth, h = sec.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); ball.position.y = h > w ? -0.25 : 0; };
+    resize(); addEventListener("resize", resize);
+
+    // estado de respiración
+    const st = { s: 0.75, amp: 0.1, br: 0 };
+    let holding = false, inhaleStart = 0, count = 0, visible = false;
+    const btn = document.getElementById("breathBtn"), state = document.getElementById("breathState"), arc = document.getElementById("breathArc"), dots = document.querySelectorAll("#breathCount i");
+    const say = (t) => { gsap.fromTo(state, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35 }); state.textContent = t; state.classList.remove("idle"); };
+    const down = (e) => {
+      e.preventDefault(); if (holding) return; holding = true; inhaleStart = performance.now(); buzz(15); say("Inhala…");
+      gsap.to(st, { s: 1.3, amp: 0.04, br: 1, duration: 4, ease: "sine.out", overwrite: true });
+      gsap.to(arc, { attr: { "stroke-dashoffset": 0 }, duration: 4, ease: "none", overwrite: true });
+      gsap.to(btn, { scale: 0.92, duration: 0.3 });
+    };
+    const up = () => {
+      if (!holding) return; holding = false; const held = (performance.now() - inhaleStart) / 1000; buzz([10, 40, 10]); say("Exhala…");
+      gsap.to(st, { s: 0.75, amp: 0.1, br: 0, duration: 3, ease: "sine.inOut", overwrite: true });
+      gsap.to(arc, { attr: { "stroke-dashoffset": 1 }, duration: 1.2, ease: "power2.out", overwrite: true });
+      gsap.to(btn, { scale: 1, duration: 0.5, ease: "elastic.out(1,0.4)" });
+      rings.forEach((r, i) => gsap.fromTo(r.scale, { x: 0.8, y: 0.8, z: 0.8 }, { x: 2.6, y: 2.6, z: 2.6, duration: 2, delay: i * 0.25, ease: "sine.out" }));
+      rings.forEach((r, i) => gsap.fromTo(r.material, { opacity: 0.6 }, { opacity: 0, duration: 2, delay: i * 0.25, ease: "sine.out" }));
+      if (held > 1.2 && count < 5) {
+        dots[count].classList.add("on"); count++;
+        if (count === 5) {
+          setTimeout(() => { buzz([20, 60, 20, 60, 40]); gsap.timeline().to("#breathDone", { opacity: 1, duration: 0.4 }).fromTo("#breathDone div", { scale: 0.6, rotate: -6 }, { scale: 1, rotate: -2, duration: 0.7, ease: "back.out(2)" }, 0).to("#breathDone", { opacity: 0, duration: 0.5, delay: 2.6 }); count = 0; setTimeout(() => dots.forEach((d) => d.classList.remove("on")), 3200); }, 600);
+        }
+      } else if (held <= 1.2) { say("Más despacio…"); }
+    };
+    btn.addEventListener("pointerdown", down); addEventListener("pointerup", up); addEventListener("pointercancel", up);
+    btn.addEventListener("contextmenu", (e) => e.preventDefault());
+
+    new IntersectionObserver((en) => { visible = en[0].isIntersecting; }, { rootMargin: "100px" }).observe(sec);
+    const clock = new THREE.Clock();
+    let sy = 0;
+    const loop = () => {
+      requestAnimationFrame(loop);
+      if (!visible) return;
+      const t = clock.getElapsedTime();
+      uni.uTime.value = RM ? 0 : t; uni.uAmp.value = st.amp; uni.uBreath.value = st.br;
+      const idle = holding ? 0 : Math.sin(t * 1.1) * 0.03;
+      ball.scale.setScalar(st.s + idle);
+      const [tx, ty] = window.__tilt || [0, 0];
+      ball.rotation.y += ((tx * 0.9) - ball.rotation.y) * 0.05 + 0.002;
+      ball.rotation.x += ((ty * 0.6) - ball.rotation.x) * 0.05;
+      rings.forEach((r) => { r.position.copy(ball.position); r.rotation.x = 1.2 + ty * 0.3; r.rotation.y = tx * 0.3; });
+      renderer.render(scene, camera);
+    };
+    loop();
+  </script>
+</body>
+</html>
